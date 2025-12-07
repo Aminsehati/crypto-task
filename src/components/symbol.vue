@@ -6,10 +6,10 @@
     <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-5">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
-          <span class="text-3xl font-bold opacity-90">#{{ symbol.cmc_rank }}</span>
+          <span class="text-3xl font-bold opacity-90">#{{ symbol?.cmc_rank }}</span>
           <div>
-            <h2 class="text-xl font-bold">{{ symbol.name }}</h2>
-            <p class="text-sm opacity-90 uppercase tracking-wider">{{ symbol.symbol }}</p>
+            <h2 class="text-xl font-bold">{{ symbol?.name }}</h2>
+            <p class="text-sm opacity-90 uppercase tracking-wider">{{ symbol?.symbol }}</p>
           </div>
         </div>
       </div>
@@ -21,7 +21,7 @@
       <div class="text-center">
         <p class="text-sm text-gray-500 uppercase tracking-wide">Price (USD)</p>
         <p class="text-4xl font-extrabold text-gray-900 mt-1">
-          ${{ formatPrice(symbol.quote.USD.price) }}
+          ${{ formatPrice(symbol?.quote.USD.price) }}
         </p>
       </div>
 
@@ -30,40 +30,40 @@
         <div
           class="text-center py-3 px-4 rounded-lg font-medium"
           :class="
-            symbol.quote.USD.percent_change_1h >= 0
+            symbol?.quote.USD.percent_change_1h >= 0
               ? 'bg-green-50 text-green-700'
               : 'bg-red-50 text-red-700'
           "
         >
           <div>1h</div>
           <div class="text-lg font-bold">
-            {{ formatChange(symbol.quote.USD.percent_change_1h) }}
+            {{ formatChange(symbol?.quote.USD.percent_change_1h) }}
           </div>
         </div>
         <div
           class="text-center py-3 px-4 rounded-lg font-medium"
           :class="
-            symbol.quote.USD.percent_change_24h >= 0
+            symbol?.quote.USD.percent_change_24h >= 0
               ? 'bg-green-50 text-green-700'
               : 'bg-red-50 text-red-700'
           "
         >
           <div>24h</div>
           <div class="text-lg font-bold">
-            {{ formatChange(symbol.quote.USD.percent_change_24h) }}
+            {{ formatChange(symbol?.quote.USD.percent_change_24h) }}
           </div>
         </div>
         <div
           class="text-center py-3 px-4 rounded-lg font-medium col-span-2"
           :class="
-            symbol.quote.USD.percent_change_7d >= 0
+            symbol?.quote.USD.percent_change_7d >= 0
               ? 'bg-green-50 text-green-700'
               : 'bg-red-50 text-red-700'
           "
         >
           <div>7d</div>
           <div class="text-lg font-bold">
-            {{ formatChange(symbol.quote.USD.percent_change_7d) }}
+            {{ formatChange(symbol?.quote.USD.percent_change_7d) }}
           </div>
         </div>
       </div>
@@ -73,30 +73,30 @@
         <div class="flex justify-between">
           <span class="text-gray-600">Market Cap</span>
           <span class="font-semibold">
-            {{ formatPrice(symbol.quote.USD.market_cap) }}
+            {{ formatPrice(symbol?.quote.USD.market_cap) }}
           </span>
         </div>
         <div class="flex justify-between">
           <span class="text-gray-600">24h Volume</span>
           <span class="font-semibold">
-            {{ formatPrice(symbol.quote.USD.volume_24h) }}
+            {{ formatPrice(symbol?.quote.USD.volume_24h) }}
           </span>
         </div>
         <div class="flex justify-between">
           <span class="text-gray-600">Circulating Supply</span>
           <span class="font-mono font-semibold">
-            {{ formatSupply(symbol.circulating_supply) }}
+            {{ formatSupply(symbol?.circulating_supply) }}
           </span>
         </div>
       </div>
 
       <div>
-        <BarChart :chart-data="chartData" :chart-options="chartOptions" />
+        <Chart :chart-data="chartData" :chart-options="chartOptions" />
       </div>
 
       <!-- Last Updated -->
       <footer class="text-xs text-gray-400 text-center pt-3 border-t">
-        Updated {{ formatTimeAgo(symbol.last_updated) }}
+        Updated {{ formatTimeAgo(symbol?.last_updated) }}
       </footer>
     </div>
   </div>
@@ -104,7 +104,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import BarChart from './BarChart.vue'
+import Chart from './BarChart.vue';
 
 const props = defineProps({
   symbol: {
@@ -117,19 +117,18 @@ const chartOptions = ref({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { labels: { color: '#444' } },
+    legend: { labels: { color: '#fff' } },
   },
   scales: {
     x: {
-      ticks: { color: '#666' },
+      ticks: { color: '#444' },
       grid: { display: false },
     },
     y: {
-      ticks: { color: '#666' },
+      ticks: { color: '#444' },
       grid: { color: 'rgba(0,0,0,0.05)' },
     },
   },
-  backgroundColor: 'transparent'
 })
 
 const chartData = computed(() => {
@@ -138,7 +137,7 @@ const chartData = computed(() => {
     labels: ['1h', '7h', '24h', '30d', '60d', '90d'],
     datasets: [
       {
-        label: 'Prices',
+        label: 'Price Changes',
         data: [
           usd?.percent_change_1h,
           usd?.percent_change_7d,
@@ -147,11 +146,16 @@ const chartData = computed(() => {
           usd?.percent_change_60d,
           usd?.percent_change_90d,
         ],
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        backgroundColor: 'rgba(99, 102, 241, 0.6)',
+        borderColor: 'rgba(139, 92, 246, 1)',
+        borderWidth: 1,
+        borderRadius: 6,
+        hoverBackgroundColor: 'rgba(139, 92, 246, 0.8)',
       },
     ],
   }
 })
+
 
 // Formatters
 const formatPrice = (num: number): string => {
